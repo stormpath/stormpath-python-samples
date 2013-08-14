@@ -1,4 +1,4 @@
-stormpath-django-samples
+stormpath-python-samples
 ========================
 
-Sample Django applications demonstrating the stormpath-django plugin and various Stormpath use cases.
+Sample Python applications demonstrating the various Stormpath use cases.
