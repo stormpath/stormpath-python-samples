@@ -4,16 +4,16 @@ from django.contrib.auth.models import (
 
 class StormpathUserManager(BaseUserManager):
 
-    def create_user(self, email, username, given_name, surname, url, password):
+    def create_user(self, email, username, first_name, last_name, password):
 
         if not email:
             raise ValueError("Users must have an email address")
 
-        if not given_name or not surname:
+        if not first_name or not last_name:
             raise ValueError("Users must provide a given name and a surname")
 
         user = self.model(email=StormpathUserManager.normalize_email(email),
-            given_name=given_name, surname=surname, url=url)
+            first_name=first_name, last_name=last_name)
 
         user.set_password(password)
         user.save(using=self._db)
@@ -31,9 +31,9 @@ class StormpathUserManager(BaseUserManager):
 class StormpathUser(AbstractBaseUser, PermissionsMixin):
 
     username = models.CharField(max_length=255)
-    given_name = models.CharField(max_length=255)
+    first_name = models.CharField(max_length=255)
     middle_name = models.CharField(max_length=255, null=True, blank=True)
-    surname = models.CharField(max_length=255)
+    last_name = models.CharField(max_length=255)
     email = models.EmailField(verbose_name='email address',
         max_length=255,
         unique=True,
@@ -41,7 +41,7 @@ class StormpathUser(AbstractBaseUser, PermissionsMixin):
     )
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username', 'given_name', 'surname']
+    REQUIRED_FIELDS = ['username', 'first_name', 'last_name']
 
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
@@ -50,7 +50,7 @@ class StormpathUser(AbstractBaseUser, PermissionsMixin):
     objects = StormpathUserManager()
 
     def get_full_name(self):
-        return "{0} {1}".format(self.given_name, self.surname)
+        return "{0} {1}".format(self.first_name, self.last_name)
 
     def get_short_name(self):
         return self.email

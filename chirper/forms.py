@@ -29,7 +29,7 @@ class UserCreateForm(forms.ModelForm):
     class Meta:
         model = get_user_model()
         fields = ("username", "email",
-            "given_name", "middle_name", "surname", "password", "password2",
+            "first_name", "middle_name", "last_name", "password", "password2",
             "account_type")
 
     def clean_password2(self):
