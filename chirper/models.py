@@ -32,7 +32,6 @@ class StormpathUser(AbstractBaseUser, PermissionsMixin):
 
     username = models.CharField(max_length=255)
     first_name = models.CharField(max_length=255)
-    middle_name = models.CharField(max_length=255, null=True, blank=True)
     last_name = models.CharField(max_length=255)
     email = models.EmailField(verbose_name='email address',
         max_length=255,

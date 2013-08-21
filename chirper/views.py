@@ -5,7 +5,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.core.exceptions import ValidationError
 from django.contrib import messages
 
-from .forms import UserCreateForm
+from .forms import UserCreateForm, PasswordResetEmailForm, PasswordResetForm
 
 @login_required
 def home(request):
@@ -49,3 +49,43 @@ def signup(request):
 
     return render(request, 'signup.html', {"form": form,
     "title": "Chirper's Egg"})
+
+def send_password_token(request):
+    form = PasswordResetEmailForm(request.POST or None)
+
+    if 'POST' in request.method:
+        if form.is_valid():
+            try:
+                form.save()
+                success_message = \
+                    """If you specified a valid account email address,
+                    you should receive Password reset instructions in a few
+                    moments. If you don't receive an email soon, please wait and
+                    then try again. If you still have problems after that,
+                    please contact support."""
+                messages.add_message(request, messages.SUCCESS, success_message)
+                return redirect('login')
+            except ValidationError:
+                return render(request, 'signup.html', {"form": form,
+                    "title": "Chirper's Amnesia"})
+
+    return render(request, 'password_email.html', {"form": form,
+        "title": "Chirper's Amnesia"})
+
+def reset_password(request):
+    form = PasswordResetForm(request.POST or None)
+
+    if 'POST' in request.method:
+        if form.is_valid():
+            try:
+                form.save(request.GET.get('sptoken'))
+                success_message = \
+                    """Success! Your password has been successfully changed.
+                    You can now log in."""
+                messages.add_message(request, messages.SUCCESS, success_message)
+                return redirect('login')
+            except ValidationError:
+                pass
+
+    return render(request, 'password_reset.html', {"form": form,
+        "title": "Chirper's Amnesia"})

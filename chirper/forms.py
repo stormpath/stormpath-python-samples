@@ -29,7 +29,7 @@ class UserCreateForm(forms.ModelForm):
     class Meta:
         model = get_user_model()
         fields = ("username", "email",
-            "first_name", "middle_name", "last_name", "password", "password2",
+            "first_name", "last_name", "password", "password2",
             "account_type")
 
     def clean_password2(self):
@@ -47,8 +47,12 @@ class UserCreateForm(forms.ModelForm):
 
         data = self.cleaned_data
         account_type = data['account_type']
-        del data['account_type']
-        del data['password2']
+        stormpath_data = {}
+
+        stormpath_data['given_name'] = data['first_name']
+        stormpath_data['surname'] = data['last_name']
+        stormpath_data['email'] = data['email']
+        stormpath_data['password'] = data['password']
 
         try:
             account = application.accounts.create(data)
@@ -64,3 +68,55 @@ class UserCreateForm(forms.ModelForm):
             premium_group = client.groups.get(settings.STORMPATH_PREMIUMS)
             account.add_group(premium_group)
             account.save()
+
+
+class UserUpdateForm(forms.ModelForm):
+    class Meta:
+        model = get_user_model()
+        fields = ("first_name", "last_name", "email")
+
+    def save(self):
+        pass
+
+class PasswordResetEmailForm(forms.Form):
+    email = forms.CharField(max_length=255)
+
+    def save(self):
+        client = Client(api_key={'id': settings.STORMPATH_ID,
+            'secret': settings.STORMPATH_SECRET})
+        application = client.applications.get(settings.STORMPATH_APPLICATION)
+
+        try:
+            application.send_password_reset_email(self.cleaned_data['email'])
+        except Error as e:
+            self._errors[NON_FIELD_ERRORS] = self.error_class([e.message])
+            raise ValidationError(e.message)
+
+class PasswordResetForm(forms.Form):
+
+    new_password1 = forms.CharField(label="New password",
+                                    widget=forms.PasswordInput)
+    new_password2 = forms.CharField(label="New password confirmation",
+                                    widget=forms.PasswordInput)
+
+    def clean_new_password2(self):
+        password1 = self.cleaned_data.get('new_password1')
+        password2 = self.cleaned_data.get('new_password2')
+        if password1 and password2:
+            if password1 != password2:
+                raise forms.ValidationError("The two passwords didn't match.")
+        return password2
+
+    def save(self, token):
+        client = Client(api_key={'id': settings.STORMPATH_ID,
+            'secret': settings.STORMPATH_SECRET})
+        application = client.applications.get(settings.STORMPATH_APPLICATION)
+
+        try:
+            account = application.verify_password_reset_token(token)
+            account.password = self.cleaned_data['new_password1']
+            account.save()
+        except:
+            message = "Invalid credentials!"
+            self._errors[NON_FIELD_ERRORS] = self.error_class([message])
+            raise ValidationError(message)
