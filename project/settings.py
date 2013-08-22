@@ -177,4 +177,4 @@ LOGGING = {
 
 LOGIN_URL = '/login'
 
-AUTH_USER_MODEL = 'django_stormpath.StormpathUser'
+AUTH_USER_MODEL = 'chirper.ChirperUser'

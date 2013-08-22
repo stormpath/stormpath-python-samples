@@ -1,35 +1,56 @@
 {% extends "home.html" %}
 
 {% block page %}
-<div class="modal" id="accountTypeModalContent" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
-     aria-hidden="true">
-    <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h3 id="myModalLabel">Account Types</h3>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="span12">
+            <form class="form-horizontal" method="post">{% csrf_token %}
+                <fieldset>
+                    <legend>{{ title }}</legend>
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+                </fieldset>
+                {% for field in form %}
+                    {% if field.errors %}
+                        <div class="control-group error">
+                            {{ field }}
+                            <span class="help-inline">
+                                {% for error in  field.errors %}{{ error }}{% endfor %}
+                            </span>
+                        </div>
+                    {% else %}
+                        <div class="control-group">
+                            {{ field }}
+                            {% if field.help_text %}
+                                <p class="help-inline"><small>{{ field.help_text }}</small></p>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+                <button type="submit" class="btn btn-primary" >Chirp!</button> <br />
+            </form>
+        </div>
     </div>
-    <div class="modal-body">
-        <p>
-        <ul>
-            <li><b>Basic</b>: Create Toot. Toots are not highlighted.</li>
-            <li><b>Premium</b>: Create Toot. Toots are highlighted soft yellow.</li>
-            <li><b>Admin</b>: Create Toot. Delete Toot. Toots are highlighted soft blue.</li>
-        </ul>
-        </p>
-    </div>
-    <div class="modal-footer">
-        <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Close</button>
-    </div>
+
+    <h3>Posted Chirps</h3>
+    {% if chirps %}
+        {% for chirp in chirps %}
+            <div class="well well-small">
+                <code><a href="#">{{ chirp.user.get_full_name }}</a>: {{ chirp.message }}</code>
+                {% if user.is_admin %}
+                        <button class="close" title="Delete the toot permanently">                          <a href="{{ chirp.id }}">&times;</a></button>
+                {% endif %}
+            </div>
+        {% endfor %}
+    {% else%}
+        <div class="alert">
+            There are no chirps!
+        </div>
+    {% endif %}
 </div>
 
-<script type="text/javascript">
-    $(document).ready(function () {
-        $('#accountTypeModalContent').modal('show');
-        $('.admin, .premium, .basic').popover({trigger: 'hover', placement: 'top'});
-        $('#accountTypeModalContent').modal();
-        $('#accountTypeModalContent').modal('hide');
-        $('#showAccountTypes').on('click', function () {
-            $('#accountTypeModalContent').modal('show');
-        });
-    });
-</script>
 {% endblock %}

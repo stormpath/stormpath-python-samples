@@ -6,11 +6,24 @@ from django.core.exceptions import ValidationError
 from django.contrib import messages
 
 from .forms import (UserCreateForm, UserUpdateForm,
-    PasswordResetEmailForm, PasswordResetForm)
+    PasswordResetEmailForm, PasswordResetForm, ChirpForm)
+from .models import Chirp
 
 @login_required
 def home(request):
-    return render(request, 'chirps.html', {"title": "Chirper's Nest"})
+    form = ChirpForm(request.POST or None)
+
+    if 'POST' in request.method:
+        if form.is_valid():
+            chirp = form.save(commit=False)
+            chirp.user = request.user
+            chirp.save()
+            form = ChirpForm()
+
+    chirps = Chirp.objects.all()
+    return render(request, 'chirps.html', {"form": form,
+        "title": "Chirper's Nest",
+        "chirps": chirps})
 
 def stormpath_login(request):
     data = request.POST or None
@@ -19,7 +32,7 @@ def stormpath_login(request):
     if 'POST' in request.method:
         if form.is_valid():
             login(request, form.get_user())
-            return render(request, 'home.html')
+            return redirect('home')
         else:
             messages.add_message(request, messages.ERROR,
                 "Invalid credentials, please try again.")

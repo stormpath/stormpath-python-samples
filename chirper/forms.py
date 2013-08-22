@@ -6,6 +6,7 @@ from stormpath.error import Error
 from django.conf import settings
 from django.forms.forms import NON_FIELD_ERRORS
 from django.forms import ValidationError
+from .models import Chirp
 
 class HorizontalRadioRenderer(forms.RadioSelect.renderer):
   def render(self):
@@ -137,3 +138,14 @@ class PasswordResetForm(forms.Form):
             message = "Invalid credentials!"
             self._errors[NON_FIELD_ERRORS] = self.error_class([message])
             raise ValidationError(message)
+
+class ChirpForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+            super(ChirpForm, self).__init__(*args, **kwargs)
+            self.fields['message'].widget.attrs['rows'] = 3
+            self.fields['message'].widget.attrs['placeholder'] = \
+                "Compose your chirp here..."
+
+    class Meta:
+        model = Chirp
+        exclude = ("user")

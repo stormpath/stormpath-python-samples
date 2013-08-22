@@ -59,20 +59,12 @@ body {
 
 .Premium {
     background-color: yellow;
-    max-width: 850px
 }
 
 .Administrator {
     background-color: #87cefa;
-    max-width: 850px
-}
-
-.Premium {
-    background-color: yellow;
-    max-width: 850px
 }
 
 .Basic {
     background-color: #f5f5f5;
-    max-width: 850px
 }
