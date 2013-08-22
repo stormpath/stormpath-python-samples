@@ -11,6 +11,7 @@ class HorizontalRadioRenderer(forms.RadioSelect.renderer):
   def render(self):
     return mark_safe(u'\n'.join(u'%s\n' % w for w in self))
 
+
 class UserCreateForm(forms.ModelForm):
 
     ACC_CHOICES = (('Admins', 'Administrator',),
@@ -76,7 +77,22 @@ class UserUpdateForm(forms.ModelForm):
         fields = ("first_name", "last_name", "email")
 
     def save(self):
-        pass
+        client = Client(api_key={'id': settings.STORMPATH_ID,
+            'secret': settings.STORMPATH_SECRET})
+
+        data = self.cleaned_data
+        try:
+            account = client.accounts.get(self.instance.url)
+            account.given_name = data['first_name']
+            account.surname = data['last_name']
+            account.email = data['email']
+            account.save()
+        except Error as e:
+            self._errors[NON_FIELD_ERRORS] = self.error_class([e.message])
+            raise ValidationError(e.message)
+
+        super(UserUpdateForm, self).save()
+
 
 class PasswordResetEmailForm(forms.Form):
     email = forms.CharField(max_length=255)
@@ -91,6 +107,7 @@ class PasswordResetEmailForm(forms.Form):
         except Error as e:
             self._errors[NON_FIELD_ERRORS] = self.error_class([e.message])
             raise ValidationError(e.message)
+
 
 class PasswordResetForm(forms.Form):
 

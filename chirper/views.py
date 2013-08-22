@@ -5,11 +5,12 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.core.exceptions import ValidationError
 from django.contrib import messages
 
-from .forms import UserCreateForm, PasswordResetEmailForm, PasswordResetForm
+from .forms import (UserCreateForm, UserUpdateForm,
+    PasswordResetEmailForm, PasswordResetForm)
 
 @login_required
 def home(request):
-    return render(request, 'home.html', {"title": "Chirper's Nest"})
+    return render(request, 'chirps.html', {"title": "Chirper's Nest"})
 
 def stormpath_login(request):
     data = request.POST or None
@@ -26,6 +27,7 @@ def stormpath_login(request):
     return render(request, 'login.html', {"form": form,
         "title": "Chirper's Door"})
 
+@login_required
 def stormpath_logout(request):
     logout(request)
     return redirect('login')
@@ -73,7 +75,7 @@ def send_password_token(request):
         "title": "Chirper's Amnesia"})
 
 def reset_password(request):
-    form = PasswordResetForm(request.POST or None)
+    form = PasswordResetForm(request.POST or request.user)
 
     if 'POST' in request.method:
         if form.is_valid():
@@ -89,3 +91,20 @@ def reset_password(request):
 
     return render(request, 'password_reset.html', {"form": form,
         "title": "Chirper's Amnesia"})
+
+@login_required
+def update_user(request):
+    if 'POST' in request.method:
+        form = UserUpdateForm(request.POST, instance=request.user)
+        if form.is_valid():
+            try:
+                form.save()
+                success_message = \
+                    """Your profile has been updated."""
+                messages.add_message(request, messages.SUCCESS, success_message)
+            except ValidationError:
+                pass
+
+    form = UserUpdateForm(instance=request.user)
+    return render(request, 'profile.html', {"form": form,
+        "title": "Chirper's Passport"})

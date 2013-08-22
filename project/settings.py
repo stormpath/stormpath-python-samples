@@ -79,6 +79,7 @@ STATIC_URL = '/static/'
 # Additional locations of static files
 STATICFILES_DIRS = (
     ABS_PATH('staticfiles'),
+    ABS_PATH(PROJECT_NAME, 'static')
 )
 
 # List of finder classes that know how to find static files in
@@ -136,6 +137,7 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_stormpath',
     'bootstrap',
     'chirper'
     # Uncomment the next line to enable the admin:
@@ -175,4 +177,4 @@ LOGGING = {
 
 LOGIN_URL = '/login'
 
-AUTH_USER_MODEL = 'chirper.StormpathUser'
+AUTH_USER_MODEL = 'django_stormpath.StormpathUser'
