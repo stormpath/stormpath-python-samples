@@ -22,7 +22,7 @@ def home(request):
 
     chirps = Chirp.objects.all()
     return render(request, 'chirps.html', {"form": form,
-        "title": "Chirper's Nest",
+        "title": "Chirper's Song",
         "chirps": chirps})
 
 def stormpath_login(request):
@@ -120,4 +120,4 @@ def update_user(request):
 
     form = UserUpdateForm(instance=request.user)
     return render(request, 'profile.html', {"form": form,
-        "title": "Chirper's Passport"})
+        "title": "Chirper's Pedigree"})
