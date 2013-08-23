@@ -22,7 +22,7 @@
                         <div class="control-group error">
                             {{ field }}
                             <span class="help-inline">
-                                {% for error in  field.errors %}{{ error }}{% endfor %}
+                                {% for error in field.errors %}{{ error }}{% endfor %}
                             </span>
                         </div>
                     {% else %}
