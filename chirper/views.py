@@ -25,6 +25,7 @@ def home(request):
     return render(request, 'chirps.html', {"form": form,
         "title": "Chirper's Song"})
 
+@login_required
 def chirping(request):
     chirps = Chirp.objects.all().select_related()
 
@@ -48,6 +49,7 @@ def chirping(request):
     return HttpResponse(json.dumps(chirp_list),
         mimetype="application/json")
 
+@login_required
 def delete_chirp(request, id):
     Chirp.objects.get(pk=id).delete()
 
