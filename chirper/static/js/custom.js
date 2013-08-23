@@ -7,9 +7,11 @@ $(document).ready(function () {
         $('#accountTypeModalContent').modal('show');
     });
     updateChirps();
+    setInterval(updateChirps, 60000);
 });
 
 function updateChirps() {
+    $(".chirps").empty();
     $.ajax({
         url: chirps_url,
         type: 'GET',
