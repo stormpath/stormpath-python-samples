@@ -116,7 +116,7 @@ def send_password_token(request):
         "title": "Chirper's Amnesia"})
 
 def reset_password(request):
-    form = PasswordResetForm(request.POST or request.user)
+    form = PasswordResetForm(request.POST or None)
 
     if 'POST' in request.method:
         if form.is_valid():
