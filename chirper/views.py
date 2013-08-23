@@ -30,15 +30,28 @@ def chirping(request):
 
     chirp_list = []
     for chirp in chirps:
+        message = "<div class='well well-small'>" + \
+                        "<code><a href='#''>" + chirp.user. get_full_name() + \
+                        "</a>: " + chirp.message + "</code>";
+
+        if chirp.user.is_admin():
+            message += "<button class='close'" + \
+                "title='Delete the chirp permanently'><a href='" + \
+                "/chirps/delete/" + str(chirp.id) + \
+                "'\>&times;</a></button>"
+
+        message += "</div>"
+
         chirp_list.append({
-            'id': chirp.id,
-            'message': chirp.message,
-            'name': chirp.user.get_full_name(),
-            'admin': chirp.user.is_admin()})
+            'message': message})
 
     return HttpResponse(json.dumps(chirp_list),
         mimetype="application/json")
 
+def delete_chirp(request, id):
+    Chirp.objects.get(pk=id).delete()
+
+    return redirect('home')
 
 def stormpath_login(request):
     data = request.POST or None

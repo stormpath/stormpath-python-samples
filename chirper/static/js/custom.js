@@ -17,18 +17,7 @@ function updateChirps() {
         success: function(response) {
             if (response.length !== 0) {
                 response.forEach(function (chirp) {
-                    html = "<div class='well well-small'> \
-                            <code><a href='#''>" + chirp.name + "</a>: " +
-                                chirp.message + "</code>";
-
-                    if (chirp.admin) {
-                        html = html + "<button class='close'" +
-                        "title='Delete the chirp permanently'>" +
-                        "<a href='" + chirp.id + "' >&times;</a></button>";
-                    }
-
-                    html = html + "</div>";
-                    $(".chirps").append(html);
+                    $(".chirps").append(chirp.message);
                 });
             } else {
                 html = "<div class='alert'>There are no chirps!</div>";
