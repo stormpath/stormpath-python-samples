@@ -13,7 +13,8 @@ urlpatterns = patterns('',
         name='password_send'),
     url(r'^password/reset', 'chirper.views.reset_password',
         name='password_reset'),
-    url(r'^profile/$', 'chirper.views.update_user', name='profile')
+    url(r'^profile/$', 'chirper.views.update_user', name='profile'),
+    url(r'^chirps/$', 'chirper.views.chirping', name='chirps')
     # url(r'^chirper/', include('chirper.foo.urls')),
 
     # Uncomment the admin/doc line below to enable admin documentation:

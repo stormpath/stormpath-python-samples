@@ -1,6 +1,9 @@
 {% extends "home.html" %}
 
 {% block page %}
+<script>
+    var chirps_url = "{% url 'chirps' %}"
+</script>
 
 <div class="container-fluid">
     <div class="row">
@@ -35,22 +38,8 @@
             </form>
         </div>
     </div>
-
     <h3>Posted Chirps</h3>
-    {% if chirps %}
-        {% for chirp in chirps %}
-            <div class="well well-small">
-                <code><a href="#">{{ chirp.user.get_full_name }}</a>: {{ chirp.message }}</code>
-                {% if user.is_admin %}
-                        <button class="close" title="Delete the toot permanently">                          <a href="{{ chirp.id }}">&times;</a></button>
-                {% endif %}
-            </div>
-        {% endfor %}
-    {% else%}
-        <div class="alert">
-            There are no chirps!
-        </div>
-    {% endif %}
+    <div class="chirps"></div>
 </div>
 
 {% endblock %}

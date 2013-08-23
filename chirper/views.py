@@ -1,9 +1,11 @@
 from django.shortcuts import render, redirect
+from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.core.exceptions import ValidationError
 from django.contrib import messages
+import json
 
 from .forms import (UserCreateForm, UserUpdateForm,
     PasswordResetEmailForm, PasswordResetForm, ChirpForm)
@@ -20,10 +22,23 @@ def home(request):
             chirp.save()
             form = ChirpForm()
 
-    chirps = Chirp.objects.all()
     return render(request, 'chirps.html', {"form": form,
-        "title": "Chirper's Song",
-        "chirps": chirps})
+        "title": "Chirper's Song"})
+
+def chirping(request):
+    chirps = Chirp.objects.all().select_related()
+
+    chirp_list = []
+    for chirp in chirps:
+        chirp_list.append({
+            'id': chirp.id,
+            'message': chirp.message,
+            'name': chirp.user.get_full_name(),
+            'admin': chirp.user.is_admin()})
+
+    return HttpResponse(json.dumps(chirp_list),
+        mimetype="application/json")
+
 
 def stormpath_login(request):
     data = request.POST or None
