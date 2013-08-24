@@ -31,15 +31,16 @@ def chirping(request):
     chirps = Chirp.objects.all().select_related()
     rendered = render_to_string("message.html", {
         'chirps': chirps,
-        'user': request.user})
+        'user': request.user,
+        'is_admin': request.user.is_admin()})
 
     return HttpResponse(json.dumps([{'chirps': rendered}]),
         mimetype="application/json")
 
 @login_required
 def delete_chirp(request, id):
-    Chirp.objects.get(pk=id).delete()
-
+    if request.user.is_admin():
+        Chirp.objects.get(pk=id).delete()
     return redirect('home')
 
 def stormpath_login(request):

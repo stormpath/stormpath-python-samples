@@ -18,7 +18,6 @@ function updateChirps() {
             type: 'GET',
             dataType: 'json',
             success: function(response) {
-                console.log(response);
                 $(".chirps").append(response[0].chirps);
             }
         });

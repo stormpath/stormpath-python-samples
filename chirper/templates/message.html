@@ -1,10 +1,15 @@
 {% if chirps %}
     {% for chirp in chirps %}
-        <div class='well well-small'>
+        <div class='well well-small
+            {% if chirp.user.is_admin %}
+                Administrator
+            {% elif chirp.user.is_premium %}
+                Premium
+            {% endif %}'>
             <code>
                 <a href='#'>{{ chirp.user.get_full_name }}</a>: {{ chirp.message }}
             </code>
-        {% if user.is_admin %}
+        {% if is_admin %}
             <button class='close' title='Delete the chirp permanently'>
                 <a href='{% url "chirp_delete" chirp.id %}'>&times;</a>
             </button>
@@ -14,5 +19,4 @@
 {% else %}
     <div class='alert'>There are no chirps!</div>";
 {% endif %}
-
 
