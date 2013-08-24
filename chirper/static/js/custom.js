@@ -18,14 +18,8 @@ function updateChirps() {
             type: 'GET',
             dataType: 'json',
             success: function(response) {
-                if (response.length !== 0) {
-                    response.forEach(function (chirp) {
-                        $(".chirps").append(chirp.message);
-                    });
-                } else {
-                    html = "<div class='alert'>There are no chirps!</div>";
-                    $(".chirps").append(html);
-                }
+                console.log(response);
+                $(".chirps").append(response[0].chirps);
             }
         });
     });

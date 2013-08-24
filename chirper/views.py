@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
+from django.template.loader import render_to_string
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm
@@ -28,25 +29,11 @@ def home(request):
 @login_required
 def chirping(request):
     chirps = Chirp.objects.all().select_related()
+    rendered = render_to_string("message.html", {
+        'chirps': chirps,
+        'user': request.user})
 
-    chirp_list = []
-    for chirp in chirps:
-        message = "<div class='well well-small'>" + \
-                        "<code><a href='#''>" + chirp.user. get_full_name() + \
-                        "</a>: " + chirp.message + "</code>";
-
-        if chirp.user.is_admin():
-            message += "<button class='close'" + \
-                "title='Delete the chirp permanently'><a href='" + \
-                "/chirps/delete/" + str(chirp.id) + \
-                "'\>&times;</a></button>"
-
-        message += "</div>"
-
-        chirp_list.append({
-            'message': message})
-
-    return HttpResponse(json.dumps(chirp_list),
+    return HttpResponse(json.dumps([{'chirps': rendered}]),
         mimetype="application/json")
 
 @login_required
