@@ -25,8 +25,16 @@ def home(request):
             chirp.save()
             form = ChirpForm()
 
+    if request.user.is_admin():
+        acc_type = 'Admin'
+    elif request.user.is_premium():
+        acc_type = 'Premium'
+    else:
+        acc_type = 'Basic'
+
     return render(request, 'chirps.html', {"form": form,
-        "title": "Chirper's Song"})
+        "title": "Chirper's Song",
+        "acc_type": acc_type})
 
 @login_required
 def chirping(request):
