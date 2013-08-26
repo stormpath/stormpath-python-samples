@@ -11,16 +11,16 @@ $(document).ready(function () {
 });
 
 function updateChirps() {
-    $(".chirps").fadeOut(function() {
-        $(this).empty();
-        $.ajax({
-            url: chirps_url,
-            type: 'GET',
-            dataType: 'json',
-            success: function(response) {
-                $(".chirps").append(response[0].chirps);
-            }
-        });
+    $.ajax({
+        url: chirps_url,
+        type: 'GET',
+        dataType: 'json',
+        success: function(response) {
+            $(".chirps").fadeOut(function() {
+                $(this).empty();
+            });
+            $(".chirps").append(response[0].chirps);
+            $(".chirps").fadeIn();
+        }
     });
-    $(".chirps").fadeIn();
 }
