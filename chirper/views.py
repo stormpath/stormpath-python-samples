@@ -8,10 +8,10 @@ from django.core.exceptions import ValidationError
 from django.contrib import messages
 import json
 
-from django_stormpath.forms import (UserCreateForm, UserUpdateForm,
+from django_stormpath.forms import (UserUpdateForm,
     PasswordResetEmailForm, PasswordResetForm)
 
-from .forms import ChirpForm
+from .forms import ChirpForm, ChirperCreateForm
 from .models import Chirp
 
 @login_required
@@ -75,7 +75,7 @@ def stormpath_logout(request):
 
 def signup(request):
     data = request.POST or None
-    form = UserCreateForm(data=data)
+    form = ChirperCreateForm(data=data)
 
     if 'POST' in request.method:
         if form.is_valid():
