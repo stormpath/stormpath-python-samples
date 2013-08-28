@@ -17,8 +17,8 @@ To use Chirper, aside from
 the settings required for django-stormpath (please see django-stormpath docs),
 you need to change the following in your settings.py file to the correct values:
 
-STORMPATH_ADMINISTRATORS = "https://api.stormpath.com/v1/groups/GROUP_ID"
-STORMPATH_PREMIUMS = "https://api.stormpath.com/v1/groups/GROUP_ID"
+    STORMPATH_ADMINISTRATORS = "https://api.stormpath.com/v1/groups/GROUP_ID"
+    STORMPATH_PREMIUMS = "https://api.stormpath.com/v1/groups/GROUP_ID"
 
 Chirper uses these two groups to determine determine the type of the user.
 These groups are aren't in any way special. They're just ordinary Stormpath
