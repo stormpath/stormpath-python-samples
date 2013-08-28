@@ -12,13 +12,12 @@ $(document).ready(function () {
 
 function updateChirps() {
     $(".chirps").fadeOut(function() {
-        $(".chirps").empty();
         $.ajax({
             url: chirps_url,
             type: 'GET',
             dataType: 'json',
             success: function(response) {
-                $(".chirps").append(response[0].chirps);
+                $(".chirps").html(response[0].chirps);
             }
         });
     });
