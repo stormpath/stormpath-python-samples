@@ -178,3 +178,9 @@ LOGGING = {
 LOGIN_URL = '/login'
 
 AUTH_USER_MODEL = 'chirper.ChirperUser'
+
+STORMPATH_ID = "apiKeyID"
+STORMPATH_SECRET = "apiKeySecret"
+STORMPATH_APPLICATION =  "https://api.stormpath.com/v1/applications/APP_ID"
+STORMPATH_ADMINISTRATORS = "https://api.stormpath.com/v1/groups/GROUP_ID"
+STORMPATH_PREMIUMS = "https://api.stormpath.com/v1/groups/GROUP_ID"
