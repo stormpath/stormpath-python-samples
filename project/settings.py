@@ -9,6 +9,7 @@ ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 
 PROJECT_NAME = "chirper"
 
+
 def ABS_PATH(*args):
     return os.path.join(ROOT_DIR, *args)
 
@@ -20,13 +21,13 @@ MANAGERS = ADMINS
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'chirper.db',                      # Or path to database file if using sqlite3.
+        'ENGINE': 'django.db.backends.sqlite3',  # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+        'NAME': 'chirper.db',  # Or path to database file if using sqlite3.
         # The following settings are not used with sqlite3:
         'USER': '',
         'PASSWORD': '',
-        'HOST': '',                      # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
-        'PORT': '',                      # Set to empty string for default.
+        'HOST': '',  # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
+        'PORT': '',  # Set to empty string for default.
     }
 }
 
@@ -87,7 +88,7 @@ STATICFILES_DIRS = (
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-#    'django.contrib.staticfiles.finders.DefaultStorageFinder',
+    # 'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
 
 # Make this unique, and don't share it with anybody.
@@ -97,7 +98,7 @@ SECRET_KEY = 'g@a&r!gagwk9womeso*b@^1*3fz_yeb!a2@br0@-3!j@2%y3gs'
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
-#     'django.template.loaders.eggs.Loader',
+    # 'django.template.loaders.eggs.Loader',
 )
 
 TEMPLATE_DIRS = (

@@ -6,6 +6,7 @@ from stormpath.client import Client
 CLIENT = Client(id=settings.STORMPATH_ID,
             secret=settings.STORMPATH_SECRET)
 
+
 class Chirp(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL)
     message = models.TextField(max_length=160, verbose_name='')
@@ -13,6 +14,7 @@ class Chirp(models.Model):
 
     class Meta:
         ordering = ['-created_at']
+
 
 class ChirperUser(StormpathUser):
 

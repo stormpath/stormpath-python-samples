@@ -7,12 +7,14 @@ from .models import Chirp
 
 
 class HorizontalRadioRenderer(forms.RadioSelect.renderer):
-  def render(self):
-    return mark_safe(u'\n'.join(u'%s\n' % w for w in self))
+    def render(self):
+        return mark_safe(u'\n'.join(u'%s\n' % w for w in self))
+
 
 class ChirperCreateForm(UserCreateForm):
 
-    ACC_CHOICES = (('Admins', 'Administrator',),
+    ACC_CHOICES = (
+        ('Admins', 'Administrator',),
         ('Premiums', 'Premium',),
         ('Basics', 'Basic'))
 
@@ -25,7 +27,7 @@ class ChirperCreateForm(UserCreateForm):
         super(ChirperCreateForm, self).save()
 
         client = Client(api_key={'id': settings.STORMPATH_ID,
-            'secret': settings.STORMPATH_SECRET})
+                'secret': settings.STORMPATH_SECRET})
         account_type = self.cleaned_data['account_type']
         if account_type == 'Admins':
             admin_group = client.groups.get(

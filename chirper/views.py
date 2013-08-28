@@ -14,6 +14,7 @@ from django_stormpath.forms import (UserUpdateForm,
 from .forms import ChirpForm, ChirperCreateForm
 from .models import Chirp
 
+
 @login_required
 def home(request):
     form = ChirpForm(request.POST or None)
@@ -36,6 +37,7 @@ def home(request):
         "title": "Chirper's Song",
         "acc_type": acc_type})
 
+
 @login_required
 def chirping(request):
     chirps = Chirp.objects.all().select_related()
@@ -47,11 +49,13 @@ def chirping(request):
     return HttpResponse(json.dumps([{'chirps': rendered}]),
         mimetype="application/json")
 
+
 @login_required
 def delete_chirp(request, id):
     if request.user.is_admin():
         Chirp.objects.get(pk=id).delete()
     return redirect('home')
+
 
 def stormpath_login(request):
     data = request.POST or None
@@ -68,10 +72,12 @@ def stormpath_login(request):
     return render(request, 'login.html', {"form": form,
         "title": "Chirper's Door"})
 
+
 @login_required
 def stormpath_logout(request):
     logout(request)
     return redirect('login')
+
 
 def signup(request):
     data = request.POST or None
@@ -93,6 +99,7 @@ def signup(request):
     return render(request, 'signup.html', {"form": form,
     "title": "Chirper's Egg"})
 
+
 def send_password_token(request):
     form = PasswordResetEmailForm(request.POST or None)
 
@@ -103,10 +110,11 @@ def send_password_token(request):
                 success_message = \
                     """If you specified a valid account email address,
                     you should receive Password reset instructions in a few
-                    moments. If you don't receive an email soon, please wait and
-                    then try again. If you still have problems after that,
+                    moments. If you don't receive an email soon, please wait
+                    and then try again. If you still have problems after that,
                     please contact support."""
-                messages.add_message(request, messages.SUCCESS, success_message)
+                messages.add_message(request, messages.SUCCESS,
+                    success_message)
                 return redirect('login')
             except ValidationError:
                 return render(request, 'signup.html', {"form": form,
@@ -114,6 +122,7 @@ def send_password_token(request):
 
     return render(request, 'password_email.html', {"form": form,
         "title": "Chirper's Amnesia"})
+
 
 def reset_password(request):
     form = PasswordResetForm(request.POST or None)
@@ -125,13 +134,15 @@ def reset_password(request):
                 success_message = \
                     """Success! Your password has been successfully changed.
                     You can now log in."""
-                messages.add_message(request, messages.SUCCESS, success_message)
+                messages.add_message(request, messages.SUCCESS,
+                    success_message)
                 return redirect('login')
             except ValidationError:
                 pass
 
     return render(request, 'password_reset.html', {"form": form,
         "title": "Chirper's Amnesia"})
+
 
 @login_required
 def update_user(request):
@@ -142,7 +153,8 @@ def update_user(request):
                 form.save()
                 success_message = \
                     """Your profile has been updated."""
-                messages.add_message(request, messages.SUCCESS, success_message)
+                messages.add_message(request, messages.SUCCESS,
+                    success_message)
             except ValidationError:
                 pass
 

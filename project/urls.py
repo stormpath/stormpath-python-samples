@@ -17,7 +17,6 @@ urlpatterns = patterns('',
     url(r'^chirps/delete/(\d+)/$', 'chirper.views.delete_chirp',
         name='chirp_delete'),
     url(r'^chirps/$', 'chirper.views.chirping', name='chirps'),
-    # url(r'^chirper/', include('chirper.foo.urls')),
 
     # Uncomment the admin/doc line below to enable admin documentation:
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
