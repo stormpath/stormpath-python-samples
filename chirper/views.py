@@ -121,8 +121,8 @@ def reset_password(request):
     form = PasswordResetForm(request.POST or None)
 
     if form.is_valid():
-        form.save(request.GET.get('sptoken'))
-        if not form.errors:
+        account = form.save(request.GET.get('sptoken'))
+        if account:
             success_message = \
                 """Success! Your password has been successfully changed.
                 You can now log in."""
