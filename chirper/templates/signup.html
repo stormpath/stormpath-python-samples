@@ -6,9 +6,9 @@
     <fieldset>
         <legend>{{ title }}</legend>
         {% if form.non_field_errors %}
-        <div class="alert alert-error">
-            {{ form.non_field_errors }}
-        </div>
+            <div class="alert alert-error">
+                {{ form.non_field_errors }}
+            </div>
         {% endif %}
         {% for field in form %}
             {% if field.errors %}

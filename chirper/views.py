@@ -89,13 +89,11 @@ def signup(request):
 
     if form.is_valid():
         form.save()
-        if not form.errors:
-            success_message = \
-                    """Thank you for registering. Check your email for a
-                    verification message and follow instructions."""
-            messages.add_message(request, messages.SUCCESS,
-                success_message)
-            return redirect('login')
+        success_message = """Thank you for registering. Check your email for a
+                            verification message and follow instructions."""
+        messages.add_message(request, messages.SUCCESS,
+            success_message)
+        return redirect('login')
 
     return render(request, 'signup.html', {"form": form,
         "title": "Chirper's Egg"})
@@ -105,17 +103,15 @@ def send_password_token(request):
     form = PasswordResetEmailForm(request.POST or None)
 
     if form.is_valid():
-        form.save()
-        if not form.errors:
-            success_message = \
-                """If you specified a valid account email address,
-                you should receive Password reset instructions in a few
-                moments. If you don't receive an email soon, please
-                wait and then try again. If you still have problems
-                after that, please contact support."""
-            messages.add_message(request, messages.SUCCESS,
-                success_message)
-            return redirect('login')
+        success_message = \
+            """If you specified a valid account email address,
+            you should receive Password reset instructions in a few
+            moments. If you don't receive an email soon, please
+            wait and then try again. If you still have problems
+            after that, please contact support."""
+        messages.add_message(request, messages.SUCCESS,
+            success_message)
+        return redirect('login')
 
     return render(request, 'password_email.html', {"form": form,
         "title": "Chirper's Amnesia"})
@@ -143,10 +139,9 @@ def update_user(request):
     form = UserUpdateForm(request.POST or None, instance=request.user)
     if form.is_valid():
         form.save()
-        if not form.errors:
-            success_message = "Your profile has been successfully updated."
-            messages.add_message(request, messages.SUCCESS,
-                success_message)
+        success_message = "Your profile has been successfully updated."
+        messages.add_message(request, messages.SUCCESS,
+            success_message)
 
     return render(request, 'profile.html', {"form": form,
         "title": "Chirper's Pedigree"})
