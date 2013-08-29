@@ -25,7 +25,6 @@ class ChirperCreateForm(UserCreateForm):
 
     def save(self):
         super(ChirperCreateForm, self).save()
-
         client = Client(api_key={'id': settings.STORMPATH_ID,
                 'secret': settings.STORMPATH_SECRET})
         account_type = self.cleaned_data['account_type']
@@ -34,11 +33,11 @@ class ChirperCreateForm(UserCreateForm):
                 settings.STORMPATH_ADMINISTRATORS)
             self.account.add_group(admin_group)
             self.account.save()
+
         elif account_type == 'Premiums':
             premium_group = client.groups.get(settings.STORMPATH_PREMIUMS)
             self.account.add_group(premium_group)
             self.account.save()
-
 
 class ChirpForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
@@ -49,4 +48,4 @@ class ChirpForm(forms.ModelForm):
 
     class Meta:
         model = Chirp
-        exclude = ("user")
+        exclude = ("user", "owner_is_admin", "owner_is_premium")

@@ -18,15 +18,20 @@ from .models import Chirp
 def home(request):
     form = ChirpForm(request.POST or None)
 
+    user_is_admin = request.user.is_superuser
+    user_is_premium = request.user.is_premium()
+
     if form.is_valid():
         chirp = form.save(commit=False)
         chirp.user = request.user
+        chirp.owner_is_admin = user_is_admin
+        chirp.owner_is_premium = user_is_premium
         chirp.save()
         form = ChirpForm()
 
-    if request.user.is_admin():
+    if user_is_admin:
         acc_type = 'Admin'
-    elif request.user.is_premium():
+    elif user_is_premium:
         acc_type = 'Premium'
     else:
         acc_type = 'Basic'
@@ -42,7 +47,7 @@ def chirping(request):
     rendered = render_to_string("message.html", {
         'chirps': chirps,
         'user': request.user,
-        'is_admin': request.user.is_admin()})
+        'is_admin': request.user.is_superuser})
 
     return HttpResponse(json.dumps([{'chirps': rendered}]),
         mimetype="application/json")
@@ -60,7 +65,10 @@ def stormpath_login(request):
 
     if 'POST' in request.method:
         if form.is_valid():
-            login(request, form.get_user())
+            user = form.get_user()
+            user.is_superuser = user.is_admin()
+            user.save()
+            login(request, user)
             return redirect('home')
         else:
             messages.add_message(request, messages.ERROR,

@@ -11,6 +11,8 @@ class Chirp(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL)
     message = models.TextField(max_length=160, verbose_name='')
     created_at = models.DateTimeField(auto_now_add=True)
+    owner_is_admin = models.BooleanField(default=False)
+    owner_is_premium = models.BooleanField(default=False)
 
     class Meta:
         ordering = ['-created_at']

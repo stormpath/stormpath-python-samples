@@ -17,6 +17,9 @@
                         {% endfor %}
                     {% endif %}
                 </fieldset>
+                {% if form.non_field_errors %}
+                    <div class="alert alert-error">{{ form.non_field_errors }}</div>
+                {% endif %}
                 {% for field in form %}
                     {% if field.errors %}
                         <div class="control-group error">

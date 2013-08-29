@@ -1,9 +1,9 @@
 {% if chirps %}
     {% for chirp in chirps %}
         <div class='well well-small
-            {% if chirp.user.is_admin %}
+            {% if chirp.owner_is_admin %}
                 Administrator
-            {% elif chirp.user.is_premium %}
+            {% elif chirp.owner_is_premium %}
                 Premium
             {% endif %}'>
             <code>
@@ -17,6 +17,6 @@
         </div>
     {% endfor %}
 {% else %}
-    <div class='alert'>There are no chirps!</div>";
+    <div class='alert'>There are no chirps!</div>
 {% endif %}
 
