@@ -58,8 +58,7 @@ def delete_chirp(request, id):
 
 
 def stormpath_login(request):
-    data = request.POST or None
-    form = AuthenticationForm(data=data)
+    form = AuthenticationForm(data=(request.POST or None))
 
     if 'POST' in request.method:
         if form.is_valid():
@@ -80,24 +79,20 @@ def stormpath_logout(request):
 
 
 def signup(request):
-    data = request.POST or None
-    form = ChirperCreateForm(data=data)
+    form = ChirperCreateForm(request.POST or None)
 
-    if 'POST' in request.method:
-        if form.is_valid():
-            try:
-                form.save()
-            except ValidationError:
-                return render(request, 'signup.html', {"form": form,
-                    "title": "Chirper's Egg"})
+    if form.is_valid():
+        form.save()
+        if not form.errors:
             success_message = \
                     """Thank you for registering. Check your email for a
                     verification message and follow instructions."""
-            messages.add_message(request, messages.SUCCESS, success_message)
+            messages.add_message(request, messages.SUCCESS,
+                success_message)
             return redirect('login')
 
     return render(request, 'signup.html', {"form": form,
-    "title": "Chirper's Egg"})
+        "title": "Chirper's Egg"})
 
 
 def send_password_token(request):
@@ -105,20 +100,17 @@ def send_password_token(request):
 
     if 'POST' in request.method:
         if form.is_valid():
-            try:
-                form.save()
+            form.save()
+            if not form.errors:
                 success_message = \
                     """If you specified a valid account email address,
                     you should receive Password reset instructions in a few
-                    moments. If you don't receive an email soon, please wait
-                    and then try again. If you still have problems after that,
-                    please contact support."""
+                    moments. If you don't receive an email soon, please
+                    wait and then try again. If you still have problems
+                    after that, please contact support."""
                 messages.add_message(request, messages.SUCCESS,
                     success_message)
                 return redirect('login')
-            except ValidationError:
-                return render(request, 'signup.html', {"form": form,
-                    "title": "Chirper's Amnesia"})
 
     return render(request, 'password_email.html', {"form": form,
         "title": "Chirper's Amnesia"})
@@ -129,16 +121,14 @@ def reset_password(request):
 
     if 'POST' in request.method:
         if form.is_valid():
-            try:
-                form.save(request.GET.get('sptoken'))
+            form.save(request.GET.get('sptoken'))
+            if not form.errors:
                 success_message = \
                     """Success! Your password has been successfully changed.
                     You can now log in."""
                 messages.add_message(request, messages.SUCCESS,
                     success_message)
                 return redirect('login')
-            except ValidationError:
-                pass
 
     return render(request, 'password_reset.html', {"form": form,
         "title": "Chirper's Amnesia"})
@@ -146,18 +136,13 @@ def reset_password(request):
 
 @login_required
 def update_user(request):
-    if 'POST' in request.method:
-        form = UserUpdateForm(request.POST, instance=request.user)
-        if form.is_valid():
-            try:
-                form.save()
-                success_message = \
-                    """Your profile has been updated."""
-                messages.add_message(request, messages.SUCCESS,
-                    success_message)
-            except ValidationError:
-                pass
+    form = UserUpdateForm(request.POST or None, instance=request.user)
+    if form.is_valid():
+        form.save()
+        if not form.errors:
+            success_message = "Your profile has been successfully updated."
+            messages.add_message(request, messages.SUCCESS,
+                success_message)
 
-    form = UserUpdateForm(instance=request.user)
     return render(request, 'profile.html', {"form": form,
         "title": "Chirper's Pedigree"})
