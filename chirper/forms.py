@@ -39,6 +39,7 @@ class ChirperCreateForm(UserCreateForm):
             self.account.add_group(premium_group)
             self.account.save()
 
+
 class ChirpForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
             super(ChirpForm, self).__init__(*args, **kwargs)
