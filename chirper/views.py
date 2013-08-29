@@ -4,7 +4,6 @@ from django.template.loader import render_to_string
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm
-from django.core.exceptions import ValidationError
 from django.contrib import messages
 import json
 
@@ -19,12 +18,11 @@ from .models import Chirp
 def home(request):
     form = ChirpForm(request.POST or None)
 
-    if 'POST' in request.method:
-        if form.is_valid():
-            chirp = form.save(commit=False)
-            chirp.user = request.user
-            chirp.save()
-            form = ChirpForm()
+    if form.is_valid():
+        chirp = form.save(commit=False)
+        chirp.user = request.user
+        chirp.save()
+        form = ChirpForm()
 
     if request.user.is_admin():
         acc_type = 'Admin'
@@ -98,19 +96,18 @@ def signup(request):
 def send_password_token(request):
     form = PasswordResetEmailForm(request.POST or None)
 
-    if 'POST' in request.method:
-        if form.is_valid():
-            form.save()
-            if not form.errors:
-                success_message = \
-                    """If you specified a valid account email address,
-                    you should receive Password reset instructions in a few
-                    moments. If you don't receive an email soon, please
-                    wait and then try again. If you still have problems
-                    after that, please contact support."""
-                messages.add_message(request, messages.SUCCESS,
-                    success_message)
-                return redirect('login')
+    if form.is_valid():
+        form.save()
+        if not form.errors:
+            success_message = \
+                """If you specified a valid account email address,
+                you should receive Password reset instructions in a few
+                moments. If you don't receive an email soon, please
+                wait and then try again. If you still have problems
+                after that, please contact support."""
+            messages.add_message(request, messages.SUCCESS,
+                success_message)
+            return redirect('login')
 
     return render(request, 'password_email.html', {"form": form,
         "title": "Chirper's Amnesia"})
@@ -119,16 +116,15 @@ def send_password_token(request):
 def reset_password(request):
     form = PasswordResetForm(request.POST or None)
 
-    if 'POST' in request.method:
-        if form.is_valid():
-            form.save(request.GET.get('sptoken'))
-            if not form.errors:
-                success_message = \
-                    """Success! Your password has been successfully changed.
-                    You can now log in."""
-                messages.add_message(request, messages.SUCCESS,
-                    success_message)
-                return redirect('login')
+    if form.is_valid():
+        form.save(request.GET.get('sptoken'))
+        if not form.errors:
+            success_message = \
+                """Success! Your password has been successfully changed.
+                You can now log in."""
+            messages.add_message(request, messages.SUCCESS,
+                success_message)
+            return redirect('login')
 
     return render(request, 'password_reset.html', {"form": form,
         "title": "Chirper's Amnesia"})
