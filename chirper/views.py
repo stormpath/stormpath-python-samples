@@ -5,8 +5,11 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
+from django.conf import settings
 import json
 
+from stormpath.error import Error
+from stormpath.client import Client
 from django_stormpath.forms import (UserUpdateForm,
     PasswordResetEmailForm, PasswordResetForm)
 
@@ -63,16 +66,12 @@ def delete_chirp(request, id):
 def stormpath_login(request):
     form = AuthenticationForm(data=(request.POST or None))
 
-    if 'POST' in request.method:
-        if form.is_valid():
-            user = form.get_user()
-            user.is_superuser = user.is_admin()
-            user.save()
-            login(request, user)
-            return redirect('home')
-        else:
-            messages.add_message(request, messages.ERROR,
-                "Invalid credentials, please try again.")
+    if form.is_valid():
+        user = form.get_user()
+        user.is_superuser = user.is_admin()
+        user.save()
+        login(request, user)
+        return redirect('home')
 
     return render(request, 'login.html', {"form": form,
         "title": "Chirper's Door"})
@@ -121,14 +120,25 @@ def reset_password(request):
     form = PasswordResetForm(request.POST or None)
 
     if form.is_valid():
-        account = form.save(request.GET.get('sptoken'))
-        if account:
+        try:
+            client = Client(api_key={'id': settings.STORMPATH_ID,
+                'secret': settings.STORMPATH_SECRET})
+            application = client.applications.get(
+                settings.STORMPATH_APPLICATION)
+            account = application.verify_password_reset_token(
+                request.GET.get('sptoken'))
+            account.password = form.cleaned_data['new_password1']
+            account.save()
+
             success_message = \
                 """Success! Your password has been successfully changed.
                 You can now log in."""
             messages.add_message(request, messages.SUCCESS,
                 success_message)
             return redirect('login')
+
+        except Error as e:
+            messages.add_message(request, messages.ERROR, str(e))
 
     return render(request, 'password_reset.html', {"form": form,
         "title": "Chirper's Amnesia"})
