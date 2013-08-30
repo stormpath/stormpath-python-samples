@@ -21,7 +21,7 @@ from .models import Chirp
 def home(request):
     form = ChirpForm(request.POST or None)
 
-    user_is_admin = request.user.is_superuser
+    user_is_admin = request.user.is_admin()
     user_is_premium = request.user.is_premium()
 
     if form.is_valid():
@@ -60,6 +60,10 @@ def chirping(request):
 def delete_chirp(request, id):
     if request.user.is_admin():
         Chirp.objects.get(pk=id).delete()
+    else:
+        messages.add_message(request, messages.ERROR,
+            "You are not the admin and cannot delete a Chirp! Sorry.")
+
     return redirect('home')
 
 
