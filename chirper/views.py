@@ -1,3 +1,11 @@
+"""Django views for the Chirper app.
+
+Note that every save call either passes or raises an Exception.
+This is because we want to print the messages provided by Stormpath.
+
+"""
+
+
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.template.loader import render_to_string
@@ -16,6 +24,8 @@ from .models import Chirp
 
 @login_required
 def home(request):
+    """Homepage with chirps.
+    """
     form = ChirpForm(request.POST or None)
 
     user_is_admin = request.user.is_admin()
@@ -43,6 +53,14 @@ def home(request):
 
 @login_required
 def chirping(request):
+    """JSON data with existing chirps.
+
+    The admin and premium information is prefilled so Stormpath isn't
+    queried for every message. The data is then accessed periodically with
+    AJAX. Because some html depends on the state of a message the data is
+    prerendered and sent as html.
+
+    """
     chirps = Chirp.objects.all().select_related()
     rendered = render_to_string("message.html", {
         'chirps': chirps,
@@ -55,6 +73,13 @@ def chirping(request):
 
 @login_required
 def delete_chirp(request, id):
+    """Delete chirp.
+
+    Only an admin can delete a chirp. Because a user can be directly removed
+    from the admin group on Stormpath, the status of the user is fetched from
+    the Stormpath service.
+    """
+
     if request.user.is_admin():
         Chirp.objects.get(pk=id).delete()
     else:
@@ -65,6 +90,13 @@ def delete_chirp(request, id):
 
 
 def stormpath_login(request):
+    """Verify user login.
+
+    It uses django_stormpath to check if user credentials are valid.
+    The superuser flag is set because we need to often check if a user is admin
+    and we want to reduce requests to Stormpath.
+
+    """
     form = AuthenticationForm(data=(request.POST or None))
 
     if form.is_valid():
@@ -80,11 +112,15 @@ def stormpath_login(request):
 
 @login_required
 def stormpath_logout(request):
+    """Simple logout view.
+    """
     logout(request)
     return redirect('login')
 
 
 def signup(request):
+    """User creation view.
+    """
     form = ChirperCreateForm(request.POST or None)
 
     if form.is_valid():
@@ -103,6 +139,13 @@ def signup(request):
 
 
 def send_password_token(request):
+    """Reset password by sending an email.
+
+    A view that provides a form with an email field to input an address to send
+    the password reset information to. The link to reset the password can be
+    set in the Stormpath web console.
+
+    """
     form = PasswordResetEmailForm(request.POST or None)
 
     if form.is_valid():
@@ -124,6 +167,14 @@ def send_password_token(request):
 
 
 def reset_password(request):
+    """Reset Stormpath password
+
+    The URL of the view should be set on the Stormpath console. Stormpath
+    adds a sptoken parameter to the url, the view processes the token
+    and on save() the request is sent to Stormpath.
+
+    """
+
     form = PasswordResetForm(request.POST or None)
 
     if form.is_valid():
@@ -143,6 +194,8 @@ def reset_password(request):
 
 @login_required
 def update_user(request):
+    """Update user view.
+    """
     form = UserUpdateForm(request.POST or None, instance=request.user)
     if form.is_valid():
         try:
@@ -154,3 +207,4 @@ def update_user(request):
 
     return render(request, 'profile.html', {"form": form,
         "title": "Chirper's Pedigree"})
+
