@@ -37,5 +37,6 @@ Running Chirper is the same as running any other Django application.
 
 ```sh
 $ python manage.py syncdb
+$ python manage.py collectstatic
 $ python manage.py runserver
 ```
